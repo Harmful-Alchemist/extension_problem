@@ -1,9 +1,9 @@
 import sqlite3
 
 con = sqlite3.connect(":memory:")
-
 cur = con.cursor()
 
+# Original variants
 cur.execute("CREATE TABLE lit(value, id)")
 cur.execute("CREATE TABLE addd(left,right)")
 
@@ -24,9 +24,9 @@ cur.execute("INSERT INTO addd VALUES (3,4)")
 (res,) = cur.execute("SELECT value FROM lit WHERE id = (SELECT MAX(id) FROM lit)").fetchone()
 
 print(res)
+print()
 
-
-# Extend type
+# Extend variants
 cur.execute("CREATE TABLE mul(left,right)")
 
 cur.execute("""
@@ -36,7 +36,6 @@ cur.execute("""
     END
 """)
 
-# Execute
 # ((3+4)+5)*5
 cur.execute("INSERT INTO lit VALUES (5,6)")
 cur.execute("INSERT INTO mul VALUES (5,6)")
@@ -93,17 +92,16 @@ cur.execute("DELETE FROM addd")
 cur.execute("DELETE FROM mul")
 cur.execute("DELETE FROM print")
 
-
 # (2+3)*(4+5)
 # 2+3
 cur.execute("INSERT INTO lit VALUES (2,1)")
 cur.execute("INSERT INTO lit VALUES (3,2)")
-cur.execute("INSERT INTO addd VALUES (1,2)") # 3
+cur.execute("INSERT INTO addd VALUES (1,2)")  # 3
 # 4+5
 cur.execute("INSERT INTO lit VALUES (4,4)")
 cur.execute("INSERT INTO lit VALUES (5,5)")
-cur.execute("INSERT INTO addd VALUES (4,5)") # 6
-
+cur.execute("INSERT INTO addd VALUES (4,5)")  # 6
+#  *
 cur.execute("INSERT INTO mul VALUES (3,6)")
 
 print("")
