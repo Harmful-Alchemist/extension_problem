@@ -46,32 +46,31 @@ cur.execute("INSERT INTO mul VALUES (5,6)")
 print(res)
 
 # Clear
+cur.execute("DELETE FROM lit")
 cur.execute("DELETE FROM addd")
 cur.execute("DELETE FROM mul")
 
 # Extend functionality
 cur.execute("CREATE TABLE print(expr,id)")
 
-# Only insert first lit
-cur.execute("INSERT INTO print VALUES ('',1)")
 cur.execute("""
     CREATE  TRIGGER lit_print AFTER INSERT ON lit
     BEGIN
-        INSERT INTO print VALUES ((SELECT expr FROM print WHERE id = (SELECT MAX(id) FROM print)) || new.value ,(SELECT MAX(id) + 1 FROM print));
+        INSERT INTO print VALUES (new.value, new.id);
     END
 """)
 
 cur.execute("""
     CREATE  TRIGGER addd_print AFTER INSERT ON addd
     BEGIN
-        INSERT INTO print VALUES ((SELECT expr FROM print WHERE id = (SELECT MAX(id) FROM print)) || ' + ' || (SELECT value FROM lit WHERE id = new.right) ,(SELECT MAX(id) + 1 FROM print));
+        INSERT INTO print VALUES ((SELECT expr FROM print WHERE id = new.left) || ' + ' || (SELECT expr FROM print WHERE id = new.right) ,(SELECT MAX(id) + 1 FROM lit));
     END
 """)
 
 cur.execute("""
     CREATE  TRIGGER mul_print AFTER INSERT ON mul
     BEGIN
-        INSERT INTO print VALUES ((SELECT expr FROM print WHERE id = (SELECT MAX(id) FROM print)) || ' * ' || (SELECT value FROM lit WHERE id = new.right) ,(SELECT MAX(id) + 1 FROM print));
+        INSERT INTO print VALUES ((SELECT expr FROM print WHERE id = new.left) || ' * ' || (SELECT expr FROM print WHERE id = new.right) ,(SELECT MAX(id) + 1 FROM lit));
     END
 """)
 
@@ -84,7 +83,7 @@ cur.execute("INSERT INTO addd VALUES (3,4)")
 cur.execute("INSERT INTO lit VALUES (5,6)")
 cur.execute("INSERT INTO mul VALUES (5,6)")
 
-(res,) = cur.execute("SELECT expr FROM print WHERE id = (SELECT MAX(id) FROM print)").fetchone()
+(res,) = cur.execute("SELECT expr FROM print WHERE id = (SELECT MAX(id) FROM lit)").fetchone()
 
 print(res)
 
@@ -93,7 +92,6 @@ cur.execute("DELETE FROM lit")
 cur.execute("DELETE FROM addd")
 cur.execute("DELETE FROM mul")
 cur.execute("DELETE FROM print")
-cur.execute("INSERT INTO print VALUES ('',1)")
 
 
 # (2+3)*(4+5)
@@ -113,6 +111,3 @@ print("")
 print(res)
 (res,) = cur.execute("SELECT value FROM lit WHERE id = (SELECT MAX(id) FROM lit)").fetchone()
 print(res)
-
-print(cur.execute("SELECT value FROM lit").fetchall())
-
