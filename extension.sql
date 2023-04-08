@@ -92,3 +92,12 @@ INSERT INTO mul VALUES (3, 6);
 
 SELECT expr FROM print WHERE id = (SELECT MAX(id) FROM print);
 -- SELECT value FROM lit WHERE id = (SELECT MAX(id) FROM lit);
+
+
+
+
+
+
+
+-- drop so can rerun script
+DROP TABLE addd; DROP TABLE lit; DROP TABLE mul; DROP TABLE print;
