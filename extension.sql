@@ -86,7 +86,7 @@ INSERT INTO mul VALUES (3, 6, 7);
 
 SELECT expr FROM print WHERE id = (SELECT MAX(id) FROM print);
 
--- Try and parse with CTE, to get an idea of possibilities, as a toy thing. Very very basic only single digits, no whitespace handling, + after * wont work...
+-- Try and parse with CTE, to get an idea of possibilities, as a toy thing. Very very basic only single digits, no whitespace handling, no precedence (or wrong precedence really), + after * wont work...
 --clear
 DELETE FROM lit;
 DELETE FROM addd;
